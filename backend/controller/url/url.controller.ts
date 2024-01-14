@@ -20,13 +20,22 @@ export class UrlController {
   @Post('')
   @ApiResponse({
     status: 201,
-    description: 'stores url into database and creates the shortened url',
+    description: 'stores url into database if it does not exist and gives it a short url key',
     type: [CreateUrlDto],
   })
   async create(@Body() createUrlDto: CreateUrlDto) {
-    const shortUrlKey = uuidv4().split('-')[0];
-    const command = new UrlCreateCommand(createUrlDto.url, shortUrlKey);
-    await this.commandBus.execute(command);
+    const findOneByUrlQuery = new UrlFindOneByUrlQuery(createUrlDto.url);
+    const urlInDatabase = await this.queryBus.execute(findOneByUrlQuery);
+
+    if (!urlInDatabase) {
+      const shortUrlKey = uuidv4().split('-')[0];
+      const command = new UrlCreateCommand(createUrlDto.url, shortUrlKey);
+      await this.commandBus.execute(command);
+      return
+    }
+    else {
+      throw new Error('Url already exists in database');
+    }
   }
 
   @Get()
@@ -42,9 +51,13 @@ export class UrlController {
   }
 
   @Get('/find-by-url/:url')
-  findOneByUrl(@Param('url') url: string) {
+ async findOneByUrl(@Param('url') url: string) {
     const query = new UrlFindOneByUrlQuery(url);
-    return this.queryBus.execute(query);
+    const shortUrl = await this.queryBus.execute(query);
+    if (!shortUrl) {
+      throw new Error('Url not found');
+    }
+    return shortUrl
   }
 
   //
