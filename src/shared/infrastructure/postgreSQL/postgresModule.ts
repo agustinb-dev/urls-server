@@ -3,7 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Url } from '../../../url/domain/Url.entity';
 import { DynamicModule, Module } from '@nestjs/common';
 
-const postgreConnectionModule = async () => {
+const postgresConnectionModule = async () => {
   return TypeOrmModule.forRootAsync({
     imports: [ConfigModule],
     inject: [ConfigService],
@@ -22,11 +22,11 @@ const postgreConnectionModule = async () => {
 };
 
 @Module({})
-export class PostgreModule {
+export class PostgresModule {
   static register(): DynamicModule {
     return {
-      module: PostgreModule,
-      imports: [postgreConnectionModule()],
+      module: PostgresModule,
+      imports: [postgresConnectionModule()],
       providers: [],
       exports: [],
     };

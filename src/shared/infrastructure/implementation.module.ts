@@ -1,5 +1,5 @@
 import { DynamicModule, Module } from '@nestjs/common';
-import { PostgreModule } from './postgreSQL/postgre.module';
+import { PostgresModule } from './postgreSQL/postgresModule';
 import { Implementation } from './enum';
 
 @Module({})
@@ -9,7 +9,7 @@ export class ImplementationModule {
 
     switch (implementation) {
       case Implementation.postgre: {
-        implementedModule = PostgreModule.register();
+        implementedModule = PostgresModule.register();
       }
     }
 

@@ -13,16 +13,19 @@ import { UrlFindOneHandler } from './url/application/useCase/findOne/UrlFindOne.
 import { UrlFindOneQuery } from './url/application/useCase/findOne/UrlFindOne.query';
 import { ImplementationModule } from './shared/infrastructure/implementation.module';
 import { Implementation } from './shared/infrastructure/enum';
+import { UrlFindOneByUrlQuery } from './url/application/useCase/findOneByUrl/UrlFindOneByUrl.query';
+import { UrlFindOneByUrlHandler } from './url/application/useCase/findOneByUrl/UrlFindOneByUrl.handler';
 
 export const Handlers = [
   UrlCreateHandler,
   UrlFindAllHandler,
   UrlRemoveHandler,
   UrlFindOneHandler,
+  UrlFindOneByUrlHandler,
 ];
 export const Commands = [UrlCreateCommand, UrlRemoveCommand];
 
-export const Queries = [UrlFindAllQuery, UrlFindOneQuery];
+export const Queries = [UrlFindAllQuery, UrlFindOneQuery, UrlFindOneByUrlQuery];
 
 @Module({
   imports: [

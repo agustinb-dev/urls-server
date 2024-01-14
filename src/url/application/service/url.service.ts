@@ -30,8 +30,24 @@ export class UrlService implements UrlRepository {
     return url;
   }
 
+  async findOneByUrl(url: string) {
+    const shortUrl = await this.urlRepository.findOne({ where: { url } });
+    if (!shortUrl) {
+      throw new NotFoundException(`Url ${url} not found`);
+    }
+    return shortUrl;
+  }
+
+  async findOneById(id: string) {
+    const url = await this.urlRepository.findOne({ where: { id } });
+    if (!url) {
+      throw new NotFoundException(`Url with ${id} not found`);
+    }
+    return url;
+  }
+
   async remove(id: string) {
-    const url = await this.findOne(id);
+    const url = await this.findOneById(id);
     return await this.urlRepository.remove(url);
   }
 

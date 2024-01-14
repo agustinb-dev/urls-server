@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { UrlFindAllQuery } from '../../../src/url/application/useCase/findAll/UrlFindAll.query';
 import { UrlRemoveCommand } from '../../../src/url/application/useCase/remove/UrlRemove.command';
 import { UrlFindOneQuery } from '../../../src/url/application/useCase/findOne/UrlFindOne.query';
+import { UrlFindOneByUrlQuery } from '../../../src/url/application/useCase/findOneByUrl/UrlFindOneByUrl.query';
 
 @Controller('url')
 @ApiTags('url-shortener')
@@ -16,7 +17,7 @@ export class UrlController {
     private readonly commandBus: CommandBus,
   ) {}
 
-  @Post()
+  @Post('')
   @ApiResponse({
     status: 201,
     description: 'stores url into database and creates the shortened url',
@@ -39,6 +40,13 @@ export class UrlController {
     const query = new UrlFindOneQuery(shortUrlKey);
     return this.queryBus.execute(query);
   }
+
+  @Get('/find-by-url/:url')
+  findOneByUrl(@Param('url') url: string) {
+    const query = new UrlFindOneByUrlQuery(url);
+    return this.queryBus.execute(query);
+  }
+
   //
   // @Patch(':id')
   // update(@Param('id') id: string, @Body() updateUrlDto: UpdateUrlDto) {
