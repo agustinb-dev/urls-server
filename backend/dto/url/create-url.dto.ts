@@ -8,5 +8,7 @@ export class CreateUrlDto {
   @ApiProperty()
   url: string;
 
+  @IsNotEmpty()
+  @IsString()
   shortUrlKey: string;
 }
