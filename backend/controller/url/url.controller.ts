@@ -1,4 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { CreateUrlDto } from '../../dto/url/create-url.dto';
 import { UrlCreateCommand } from '../../../src/url/application/useCase/create/UrlCreate.command';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -17,6 +26,14 @@ export class UrlController {
     private readonly commandBus: CommandBus,
   ) {}
 
+  private isValidUrl(url: string) {
+    try {
+      new URL(url);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
   @Post('')
   @ApiResponse({
     status: 201,
@@ -28,13 +45,20 @@ export class UrlController {
     const findOneByUrlQuery = new UrlFindOneByUrlQuery(createUrlDto.url);
     const urlInDatabase = await this.queryBus.execute(findOneByUrlQuery);
 
+    if (!this.isValidUrl(createUrlDto.url)) {
+      throw new HttpException('Invalid url', HttpStatus.CONFLICT);
+    }
+
     if (!urlInDatabase) {
       const shortUrlKey = uuidv4().split('-')[0];
       const command = new UrlCreateCommand(createUrlDto.url, shortUrlKey);
       await this.commandBus.execute(command);
       return;
     } else {
-      throw new Error('Url already exists in database');
+      throw new HttpException(
+        'Url already exists in database',
+        HttpStatus.CONFLICT,
+      );
     }
   }
 
@@ -52,6 +76,10 @@ export class UrlController {
 
   @Get('/find-by-url/:url')
   async findOneByUrl(@Param('url') url: string) {
+    if (!this.isValidUrl(url)) {
+      throw new HttpException('Invalid url', HttpStatus.CONFLICT);
+    }
+
     const query = new UrlFindOneByUrlQuery(url);
     const shortUrl = await this.queryBus.execute(query);
     if (!shortUrl) {
