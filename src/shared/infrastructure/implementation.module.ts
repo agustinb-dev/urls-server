@@ -1,5 +1,5 @@
 import { DynamicModule, Module } from '@nestjs/common';
-import { PostgresModule } from './postgreSQL/postgresModule';
+import { PostgresModule } from './postgreSQL/postgres.module';
 import { Implementation } from './enum';
 
 @Module({})

@@ -7,7 +7,10 @@ import { ConfigModule } from '@nestjs/config';
   imports: [
     UrlModule,
     CqrsModule,
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: process.env.NODE_ENV === 'docker' ? '.env.docker' : '.env',
+    }),
   ],
   controllers: [UrlController],
   providers: [],
