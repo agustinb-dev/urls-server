@@ -1,0 +1,39 @@
+version: '3.5'
+
+services:
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    container_name: urls-sever-db-postgres
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - '${DB_PORT}:${DB_PORT}'
+
+  urls-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: urls-server
+    environment:
+      - PORT=${URLS_SERVER_PORT}
+    ports:
+      - '${URLS_SERVER_PORT}:${URLS_SERVER_PORT}'
+    depends_on:
+      - postgres
+    volumes:
+      - ./src:/app/src
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    container_name: urls-server-pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PG_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PG_PASSWORD}
+    ports:
+      - '5050:${PG_PORT}'
+    depends_on:
+      - postgres
