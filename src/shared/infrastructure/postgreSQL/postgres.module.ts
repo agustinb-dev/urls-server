@@ -17,6 +17,7 @@ const postgresConnectionModule = async () => {
       entities: [Url],
       synchronize: true,
       logging: true,
+      url: configService.get('DATABASE_URL'),
     }),
   });
 };
